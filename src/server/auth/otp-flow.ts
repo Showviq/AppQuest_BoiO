@@ -63,6 +63,8 @@ function mapApplinkError(e: unknown): never {
   if (e instanceof ApplinkError) {
     if (e.code === "E1850") throw new FlowError(400, "Wrong code. Try again.");
     if (e.code === "E1851" || e.code === "E1855") throw new FlowError(410, "Code expired. Request a new one.");
+    // Limited Production: only numbers whitelisted in the Applink portal can use the app.
+    if (e.code === "E1343") throw new FlowError(403, "This number isn't enabled yet. Try another Banglalink number.");
     if (e.kind === "transient") throw new FlowError(503, "Service busy. Try again in a moment.");
     console.error("[applink]", e.code, e.kind); // no secrets, no OTP, no referenceNo
     throw new FlowError(502, "Verification is unavailable right now.");

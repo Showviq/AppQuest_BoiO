@@ -9,6 +9,9 @@ Phase: **MVP** = 30 Nov submission · **S** = enhancement sprint (6–16 Dec) ·
 | Phone sign-up + OTP (Applink) + consent | MVP | ✅ (mock) |
 | Profile: name, stats, 4 favourite books, theme | MVP | 🎨 |
 | Privacy (private library), block/report | S | 💤 |
+| Author / publisher role: apply → admin verify → Studio (D-013) | MVP | 🎨 |
+| Author Studio: announcements, tips summary | MVP | 🎨 |
+| Publisher Studio: announcements, Boi Mela stall, promotion requests | MVP | 🎨 |
 
 ## Catalog & search
 | Feature | Phase | Status |
@@ -33,7 +36,9 @@ Phase: **MVP** = 30 Nov submission · **S** = enhancement sprint (6–16 Dec) ·
 | Half-star ratings, short reviews, spoiler toggle | MVP | 🎨 |
 | Follow readers, basic feed | S | 🎨 (feed) |
 | Communities (join/leave) | S | 🎨 |
-| Comments, messaging | P | 💤 |
+| Comments | P | 🎨 |
+| Posts with audience: Everyone / Followers / Community (D-016) | MVP | 🎨 |
+| Direct messages | — | ✂️ cut (D-015) |
 
 ## Boi Mela
 | Feature | Phase | Status |
@@ -47,7 +52,7 @@ Phase: **MVP** = 30 Nov submission · **S** = enhancement sprint (6–16 Dec) ·
 |---|---|---|
 | Boi-O Pro (CaaS pass or Subscription, see D-004) | MVP | 🎨 (disabled) |
 | Author tips via CaaS (৳2/5/10) | S | 🎨 (disabled) |
-| Publisher promoted listings | P | 💤 |
+| Publisher promotions (Book Boost, Boi Mela Spotlight), invoice | MVP | 🎨 (request only) |
 
 ## Later (from the long-term vision)
-Marketplace (buy/sell/exchange/lend), audiobooks, quizzes & badges, character encyclopedia, events, author/publisher dashboards, Flutter app.
+Marketplace (buy/sell; exchange and lending cut in D-015), audiobooks, quizzes & badges, character encyclopedia, events, author/publisher dashboards, Flutter app.

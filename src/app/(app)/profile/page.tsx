@@ -1,17 +1,20 @@
 "use client";
 
-import { BadgeCheck, Crown, LogOut } from "lucide-react";
+import { BadgeCheck, ChevronRight, Crown, LogOut, MapPin, Settings } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BookCover } from "@/components/book-cover";
 import { useLibrary } from "@/components/library-store";
+import { usePartner } from "@/components/partner-store";
 import { Sheet } from "@/components/sheet";
 import { useToast } from "@/components/toast";
-import { Accordion, Button, PageTitle } from "@/components/ui";
+import { Accordion, Button, CountUp, Hero, PageTitle } from "@/components/ui";
 import { getBook } from "@/lib/mock-data";
+import { getPerson } from "@/lib/mock/people";
 
 type Me = { id: string; name: string | null; phone: string; subscriptionStatus: string; profileComplete: boolean };
 type Theme = "system" | "light" | "dark";
+const statusText = { pending: "Under review", approved: "Verified", rejected: "Not approved" };
 
 export default function Profile() {
   const [me, setMe] = useState<Me | null | undefined>(undefined);
@@ -19,6 +22,7 @@ export default function Profile() {
   const [theme, setTheme] = useState<Theme>("system");
   const { library } = useLibrary();
   const toast = useToast();
+  const partner = usePartner();
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -62,26 +66,51 @@ export default function Profile() {
     .map(([id]) => getBook(id))
     .filter((b) => b !== undefined);
 
+  const demo = getPerson("me")!; // bio/location/cover are demo data until the profile API stores them
+
   if (me === undefined) {
-    return <div className="mt-24 h-24 animate-pulse rounded-2xl bg-surface-2" aria-label="Loading" />;
+    return <div className="mt-24 h-24 skeleton rounded-2xl" aria-label="Loading" />;
   }
 
   return (
     <>
-      <PageTitle>Profile</PageTitle>
+      <PageTitle
+        action={
+          <Link href="/settings" aria-label="Settings" className="grid size-11 place-items-center rounded-full hover:bg-surface-2">
+            <Settings size={22} />
+          </Link>
+        }
+      >
+        Profile
+      </PageTitle>
 
       {me ? (
-        <div className="flex items-center gap-4">
-          <div className="grid size-16 place-items-center rounded-full bg-forest font-serif text-2xl text-on-forest">
-            {(me.name ?? "B").charAt(0).toUpperCase()}
-          </div>
-          <div>
-            <p className="text-xl font-semibold">{me.name ?? "Reader"}</p>
-            <p className="flex items-center gap-1 text-sm text-ink-soft">
-              {me.phone} <BadgeCheck size={14} className="text-forest" aria-label="Verified" />
-            </p>
-          </div>
-        </div>
+        <>
+          <Hero
+            background={demo.cover}
+            avatar={
+              <span className="grid size-20 place-items-center rounded-full bg-forest font-serif text-3xl text-on-forest shadow-lg ring-4 ring-bg">
+                {(me.name ?? "B").charAt(0).toUpperCase()}
+              </span>
+            }
+            actions={
+              <Link
+                href="/u/me"
+                className="inline-flex h-11 items-center gap-1 rounded-full border border-line bg-surface pl-4 pr-3 text-sm font-semibold hover:bg-surface-2"
+              >
+                Public profile <ChevronRight size={16} className="text-ink-soft" />
+              </Link>
+            }
+          />
+          <h2 className="mt-3 text-2xl font-semibold">{me.name ?? "Reader"}</h2>
+          <p className="flex items-center gap-1 text-sm text-ink-soft">
+            {me.phone} <BadgeCheck size={14} className="text-forest" aria-label="Verified" />
+          </p>
+          <p className="mt-2">{demo.bio}</p>
+          <p className="mt-1 flex items-center gap-1 text-sm text-ink-soft">
+            <MapPin size={14} /> {demo.location}
+          </p>
+        </>
       ) : (
         <div className="rounded-2xl bg-forest p-5 text-on-forest">
           <p className="font-serif text-2xl">Save your reading</p>
@@ -99,7 +128,9 @@ export default function Profile() {
       <dl className="mt-6 grid grid-cols-3 rounded-2xl border border-line bg-surface py-4 text-center">
         {stats.map((s) => (
           <div key={s.label}>
-            <dd className="text-2xl font-semibold">{s.value}</dd>
+            <dd className="text-2xl font-semibold">
+              <CountUp value={s.value} />
+            </dd>
             <dt className="text-xs text-ink-soft">{s.label}</dt>
           </div>
         ))}
@@ -130,6 +161,19 @@ export default function Profile() {
           <Button className="mt-4" onClick={() => setProOpen(true)}>
             See plan
           </Button>
+        </Accordion>
+        <Accordion
+          title="Authors & Publishers"
+          meta={partner.app ? <span className="text-xs">{statusText[partner.app.status]}</span> : undefined}
+        >
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href={partner.app?.status === "approved" ? "/studio" : "/partner"}
+              className="inline-flex h-11 items-center rounded-full bg-forest px-5 font-semibold text-on-forest"
+            >
+              {partner.app?.status === "approved" ? "Open Studio" : partner.app ? "See application" : "Apply"}
+            </Link>
+          </div>
         </Accordion>
         <Accordion title="Appearance">
           <div role="radiogroup" aria-label="Theme" className="grid grid-cols-3 gap-2">

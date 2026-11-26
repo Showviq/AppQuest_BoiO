@@ -1,15 +1,21 @@
 "use client";
 
-import { BookMarked, Compass, House, UserRound, UsersRound } from "lucide-react";
+import { BookMarked, Compass, House, LayoutGrid, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Bottom bar (mobile) keeps 5 slots; the side bar (desktop) has room for more.
 const tabs = [
   { href: "/", label: "Home", icon: House },
   { href: "/discover", label: "Discover", icon: Compass },
   { href: "/library", label: "Library", icon: BookMarked },
-  { href: "/community", label: "Community", icon: UsersRound },
   { href: "/profile", label: "Profile", icon: UserRound },
+  { href: "/more", label: "More", icon: LayoutGrid },
+];
+const sideTabs = [
+  ...tabs.slice(0, 3),
+  { href: "/community", label: "Community", icon: UsersRound },
+  ...tabs.slice(3),
 ];
 
 function isActive(path: string, href: string) {
@@ -35,7 +41,13 @@ export function BottomNav() {
                   active ? "font-semibold text-forest" : "text-ink-soft"
                 }`}
               >
-                <Icon size={22} strokeWidth={active ? 2.25 : 1.75} />
+                <span
+                  className={`grid h-8 w-14 place-items-center rounded-full transition-colors duration-200 ${
+                    active ? "bg-forest-soft" : ""
+                  }`}
+                >
+                  <Icon size={22} strokeWidth={active ? 2.25 : 1.75} className={active ? "pop" : ""} key={String(active)} />
+                </span>
                 {label}
               </Link>
             </li>
@@ -53,7 +65,7 @@ export function SideNav() {
       <Link href="/" className="mb-6 px-3 font-serif text-3xl text-forest">
         Boi-O
       </Link>
-      {tabs.map(({ href, label, icon: Icon }) => {
+      {sideTabs.map(({ href, label, icon: Icon }) => {
         const active = isActive(path, href);
         return (
           <Link

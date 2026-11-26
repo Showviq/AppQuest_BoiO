@@ -79,6 +79,24 @@ export function upsertVerified(input: {
   return user;
 }
 
+/**
+ * Mirror a subscription change pushed by Applink (subscriber notification).
+ * Matches on subscriberId, or on the phone when the id is an unmasked tel:880… number.
+ * Idempotent: re-applying the same status is a no-op. Returns false if no user matches.
+ */
+export function applySubscriptionStatus(subscriberId: string, status: string): boolean {
+  const users = load();
+  const digits = subscriberId.replace(/^tel:/, "");
+  const h = /^8801\d{9}$/.test(digits) ? hashPhone(digits) : null;
+  const u = users.find((x) => x.subscriberId === subscriberId || (h !== null && x.phoneHash === h));
+  if (!u) return false;
+  if (u.subscriptionStatus !== status) {
+    u.subscriptionStatus = status;
+    save(users);
+  }
+  return true;
+}
+
 export function updateProfile(id: string, name: string, password: string) {
   const users = load();
   const u = users.find((x) => x.id === id);

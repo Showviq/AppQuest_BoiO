@@ -9,7 +9,8 @@ Applink runs on the **Banglalink** network (numbers starting 014 / 019). Every c
 | App created + approval email | ✅ Done |
 | App approved / credentials received | ❓ |
 | OTP built against local mock | ✅ 2026-11-26 |
-| OTP tested on real Applink | ⬜ needs credentials + whitelisted server IP |
+| Server with fixed IP deployed (65.0.242.101, D-014) | ✅ 2026-11-27 |
+| OTP tested on real Applink | ⬜ add 65.0.242.101 to allowed hosts + test numbers |
 | SMS / USSD / Subscription / CaaS | ⬜ |
 
 ## API roles
@@ -35,6 +36,10 @@ Returning users: phone + password (no Applink call).
 | Error mapping | E1850 wrong code · E1851/E1855 expired · E1603 busy · config errors logged, generic message shown |
 
 Code: `src/server/applink/` (config + client), `src/server/auth/otp-flow.ts`, `src/app/api/auth/*`.
+
+## Subscription notification: implemented
+`POST /api/applink/subscription/notify` (portal URL: `https://65-0-242-101.sslip.io/api/applink/subscription/notify`).
+Checks `applicationId` + `password` (constant time; payload never logged), updates the user's `subscriptionStatus` (idempotent), always answers `S1000` once authenticated. Code: `src/app/api/applink/subscription/notify/route.ts`.
 
 ## Local mock
 `/api/dev/applink/otp/{request,verify}` follows the published contract (string-only values, credential check, E1850/E1851/E1855). Enabled only with `APPLINK_DEV_MOCK=1`, never in production. Test code: **123456**.

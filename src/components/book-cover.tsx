@@ -12,7 +12,7 @@ export function BookCover({ book, size = "md" }: { book: Book; size?: keyof type
     <div
       role="img"
       aria-label={`${book.title} — ${book.author}`}
-      className={`relative aspect-[2/3] shrink-0 overflow-hidden shadow-[0_6px_14px_-6px_rgba(0,0,0,.45)] ${sizes[size]}`}
+      className={`lift relative aspect-[2/3] shrink-0 overflow-hidden shadow-[0_6px_14px_-6px_rgba(0,0,0,.45)] ${sizes[size]}`}
       style={{ background: book.cover.bg, color: book.cover.fg }}
     >
       {/* spine hinge */}

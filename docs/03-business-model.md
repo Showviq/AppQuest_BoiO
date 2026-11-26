@@ -8,7 +8,10 @@
 | **Boi-O Pro** | Readers | ৳30 / month | Applink Subscription |
 | **Daily Boi SMS** (quote + streak nudge) | Feature-phone readers | ৳2 / day *or* bundled in Pro | Applink Subscription + SMS |
 | **Author tips** | Readers | ৳2 / ৳5 / ৳10, platform keeps 15% | Applink CaaS |
-| **Promoted listings / Boi Mela stall boost** | Publishers | ৳1,000–5,000 / campaign | Invoice (B2B) |
+| **Book Boost** (featured in Discover) | Publishers | ৳1,000 / 7 days | Invoice (B2B) |
+| **Boi Mela Spotlight** (top of USSD Trending, stall pinned, fair SMS to opted-in readers) | Publishers | ৳5,000 / fair | Invoice (B2B) |
+
+**Authors and publishers:** verification is free and can't be bought (D-013).
 
 **Free forever:** search, library, ratings, reviews, SMS logging, USSD Boi Mela menu. Free features drive growth; Pro adds depth.
 

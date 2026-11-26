@@ -28,8 +28,9 @@ export const viewport: Viewport = {
   ],
 };
 
-// Applies the saved theme before paint to avoid a flash.
-const themeScript = `try{var t=localStorage.getItem("boio-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
+// Applies the saved theme and accessibility prefs before paint to avoid a flash.
+// Keys must match components/settings/a11y.ts.
+const themeScript = `try{var d=document.documentElement.dataset,t=localStorage.getItem("boio-theme");if(t==="light"||t==="dark")d.theme=t;var a=JSON.parse(localStorage.getItem("boio-a11y")||"{}");if(a.font)d.font="dyslexic";if(a.contrast)d.contrast="high";if(a.text&&a.text!=="md")d.text=a.text;if(a.motion)d.motion="reduce"}catch(e){}`;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

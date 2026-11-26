@@ -1,12 +1,15 @@
 "use client";
 
-import { ArrowLeft, BookmarkPlus, Check, Coins, Star } from "lucide-react";
+import { ArrowLeft, BookmarkPlus, Check, Coins, Drama, Headphones, PenLine, Quote, Star } from "lucide-react";
+import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { ProgressSheet, RateSheet, ShelfSheet } from "@/components/book-actions";
 import { BookCover } from "@/components/book-cover";
 import { shelfLabels, useLibrary } from "@/components/library-store";
 import { Sheet } from "@/components/sheet";
+import { BookDiscussion } from "@/components/social/book-discussion";
+import { BookPosts } from "@/components/social/book-posts";
 import { Stars } from "@/components/stars";
 import { Accordion, Button } from "@/components/ui";
 import { feed, getBook } from "@/lib/mock-data";
@@ -60,6 +63,24 @@ export default function BookPage() {
         </button>
       )}
 
+      <ul className="mt-5 grid grid-cols-4 gap-2 text-center text-xs">
+        {[
+          { href: `/review/${book.id}`, label: "Review", icon: PenLine },
+          { href: `/quote?book=${book.id}`, label: "Quote card", icon: Quote },
+          { href: `/audio/${book.id}`, label: "Listen", icon: Headphones },
+          { href: "/characters", label: "Characters", icon: Drama },
+        ].map(({ href, label, icon: Icon }) => (
+          <li key={label}>
+            <Link href={href} className="flex flex-col items-center gap-1 rounded-2xl py-2 hover:bg-surface-2">
+              <span className="grid size-11 place-items-center rounded-full border border-line bg-surface text-forest">
+                <Icon size={18} />
+              </span>
+              {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+
       <div className="mt-6 rounded-2xl border border-line bg-surface px-4">
         <Accordion title="About" defaultOpen>
           <p className="font-serif text-ink">{book.blurb}</p>
@@ -106,6 +127,10 @@ export default function BookPage() {
           </div>
         </Accordion>
       </div>
+
+      <BookDiscussion />
+
+      <BookPosts bookId={book.id} />
 
       <ShelfSheet book={book} open={sheet === "shelf"} onClose={() => setSheet(null)} />
       {sheet === "rate" && <RateSheet book={book} open onClose={() => setSheet(null)} />}

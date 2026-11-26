@@ -4,6 +4,10 @@ New decisions go at the top. Status: **Accepted** · **Proposed** (waiting for t
 
 | # | Date | Decision | Status |
 |---|---|---|---|
+| D-016 | 2026-11-27 | Post visibility: Everyone / Followers / Community | Accepted |
+| D-015 | 2026-11-27 | Cut: direct messages, book exchange, lending | Accepted |
+| D-014 | 2026-11-27 | Minimal deploy for real OTP: AWS EC2 Mumbai, fixed IP | Accepted |
+| D-013 | 2026-11-27 | Authors & publishers: same phone login, role by verification (mockup) | Accepted |
 | D-012 | 2026-11-26 | Competition source files kept out of the public repo | Accepted |
 | D-011 | 2026-11-26 | Phase now: real OTP, everything else UI mockup | Accepted |
 | D-010 | 2026-11-26 | Temporary storage: JSON file + in-memory until the backend phase | Accepted |
@@ -18,6 +22,36 @@ New decisions go at the top. Status: **Accepted** · **Proposed** (waiting for t
 | D-001 | 2026-11-26 | Product is **Boi-O**, an independent product | Accepted |
 
 ---
+
+### D-016 · Who sees a post
+| Audience | Shows in |
+|---|---|
+| **Everyone** | Followers' *Following* feed, *Latest*, your profile, the book's page (if a book is attached). Can surface in *For You* / *Trending*. |
+| **Followers** | Followers' *Following* feed, your profile (followers only). Never on book pages or public feeds. |
+| **Community** | That community's page only. |
+- The author always sees their own posts first in their feed. Spoilers stay hidden everywhere until tapped. Blocked users see nothing.
+- The compose screen shows these places live under the audience picker (`reach` in `src/components/social/my-posts.tsx`).
+- **Now (mockup):** posts saved in this browser (`localStorage`). **Later:** `Posts` table with an `audience` column, feed queries filter by follower graph and membership.
+
+### D-015 · Scope cut: messages, exchange, lending
+- **Why:** less to build and moderate before the deadline; DMs need abuse handling; exchange and lending need trust and dispute flows.
+- **Instead:** marketplace buyers tap **Request**, and the seller gets an **SMS** (Applink) with the buyer's request. "Share" keeps Copy link and Quote card.
+
+### D-014 · Minimal deploy (real OTP)
+- **Why:** Applink only accepts calls from allow-listed IPs (`E1303`). Home IPs rotate (seen: .31 → .21 in minutes), so calls must come from a fixed IP.
+- **Where:** AWS account 8151… (CLI profile `infoinlet-deploy`), `ap-south-1`, `t4g.micro` Ubuntu 24.04 + 2 GB swap, instance `boio-otp`.
+- **Fixed IP (Applink allowed host):** `65.0.242.101` (Elastic IP).
+- **URL:** https://65-0-242-101.sslip.io (Caddy, automatic HTTPS; no domain needed).
+- **Runs as:** systemd `boio` (`next start` on 127.0.0.1:3000) behind Caddy. Env in `/opt/boio/.env.production` (600, live Applink URLs, mock off). Users in `/opt/boio/.data/` (single process, fits D-010).
+- **SSH:** key `~/.ssh/boio-otp.pem`; port 22 open only to 103.187.95.0/24 (home ISP).
+- **Redeploy:** `bash scripts/deploy.sh`.
+- **Cost:** free tier if eligible, else ~$9–10/month. Delete the instance + release the Elastic IP when done.
+
+### D-013 · Author & publisher accounts
+- **Decision:** No separate login. Authors and publishers sign up with the same phone + OTP account, then **apply** for a role (name, official link, proof: ISBN or trade licence). An admin approves or rejects with a reason. Approval adds the role and unlocks **Studio**.
+- **Paying:** authors don't pay; they earn **tips** (CaaS ৳2/5/10, 15% fee). Publishers buy **promotions** (Book Boost ৳1,000 / 7 days, Boi Mela Spotlight ৳5,000 / fair) **by invoice**, since these amounts are too large for carrier billing. Paying never grants verification (master prompt §16.5).
+- **Now (mockup, per D-011):** `/partner` (apply), `/admin/verify` (demo admin, no auth), `/studio` (dashboards). State in `localStorage` (`src/components/partner-store.tsx`).
+- **Later:** `role` on the user, `VerificationRequests` table, real admin role + audit log, invoices.
 
 ### D-012 · Source files stay local
 - The booklet PDF, the master prompt `.docx` and the booklet notes are git-ignored. The repo only holds Boi-O's own work.

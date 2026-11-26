@@ -1,11 +1,11 @@
 "use client";
 
-import { Search, X } from "lucide-react";
+import { ScanBarcode, Search, SlidersHorizontal, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { BookCover } from "@/components/book-cover";
 import { Stars } from "@/components/stars";
-import { PageTitle } from "@/components/ui";
+import { PageTitle, Rail } from "@/components/ui";
 import { books, moods, searchBooks } from "@/lib/mock-data";
 
 export default function Discover() {
@@ -19,7 +19,15 @@ export default function Discover() {
 
   return (
     <>
-      <PageTitle>Discover</PageTitle>
+      <PageTitle
+        action={
+          <Link href="/scan" aria-label="Scan ISBN" className="grid size-11 place-items-center rounded-full hover:bg-surface-2">
+            <ScanBarcode size={22} />
+          </Link>
+        }
+      >
+        Discover
+      </PageTitle>
 
       <div className="relative">
         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-soft" aria-hidden />
@@ -42,7 +50,19 @@ export default function Discover() {
         )}
       </div>
 
-      <div className="no-scrollbar -mx-4 mt-4 flex gap-2 overflow-x-auto px-4" role="group" aria-label="Moods">
+      <div className="mt-3 grid grid-cols-3 gap-2 text-sm">
+        {[
+          { href: `/search${q ? `?q=${encodeURIComponent(q)}` : ""}`, label: "Search", icon: Search },
+          { href: "/browse", label: "Browse", icon: SlidersHorizontal },
+          { href: "/moods", label: "Moods", icon: Sparkles },
+        ].map(({ href, label, icon: Icon }) => (
+          <Link key={label} href={href} className="flex h-10 items-center justify-center gap-1.5 rounded-xl border border-line bg-surface">
+            <Icon size={16} className="text-forest" /> {label}
+          </Link>
+        ))}
+      </div>
+
+      <Rail as="div" className="mt-4 gap-2" role="group" label="Moods">
         {moods.map((m) => (
           <button
             key={m}
@@ -55,7 +75,7 @@ export default function Discover() {
             {m}
           </button>
         ))}
-      </div>
+      </Rail>
 
       {results.length === 0 ? (
         <p className="mt-16 text-center text-ink-soft">No books match “{q}”.</p>

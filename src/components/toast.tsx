@@ -25,7 +25,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className="backdrop-enter rounded-full bg-ink px-4 py-2 text-sm text-bg shadow-lg"
+            role="status"
+            className="toast-enter rounded-full bg-ink px-4 py-2 text-sm text-bg shadow-lg"
           >
             {t.text}
           </div>

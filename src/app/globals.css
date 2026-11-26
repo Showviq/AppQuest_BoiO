@@ -111,5 +111,153 @@ details[open] > summary .chev {
   .backdrop-enter { animation: none; }
 }
 
+/* ── Motion ────────────────────────────────────────────────────────────────
+   Small, quick, purposeful. Opacity + short translations only, nothing loops
+   except loading shimmer. All of it is off when the OS asks for reduced motion
+   (and the in-app "Reduce motion" setting below kills any remainder). */
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: 150% 0; }
+  to { background-position: -50% 0; }
+}
+@keyframes grow-x {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Page change: fade only (a transform here would break fixed children). */
+  .page-enter { animation: fade-in 220ms ease-out both; }
+
+  /* Lists: first items rise in one after another. */
+  .stagger > * { animation: rise-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .stagger > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger > *:nth-child(3) { animation-delay: 80ms; }
+  .stagger > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger > *:nth-child(5) { animation-delay: 160ms; }
+  .stagger > *:nth-child(6) { animation-delay: 200ms; }
+  .stagger > *:nth-child(n + 7) { animation-delay: 240ms; }
+
+  /* Sections reveal as they scroll in (Chromium/Safari 18+; others just show). */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: rise-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+
+  /* Press feedback on anything tappable. */
+  button:not(:disabled),
+  a,
+  [role="tab"],
+  summary {
+    transition-property: transform, background-color, color, border-color, opacity, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+  button:not(:disabled):active,
+  a:active,
+  summary:active { transform: scale(0.97); }
+
+  /* Covers lift a little under a mouse. */
+  @media (hover: hover) {
+    .lift { transition: transform 200ms ease-out, box-shadow 200ms ease-out; }
+    a:hover > .lift,
+    .lift:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.45); }
+  }
+
+  .pop { animation: pop 320ms cubic-bezier(0.3, 1.6, 0.5, 1); }
+  .toast-enter { animation: toast-in 240ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .tab-bar { transition: transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1), width 280ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .grow-x { transform-origin: left; animation: grow-x 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  details > div { animation: rise-in 220ms ease-out; }
+  .chev { transition: transform 200ms ease-out; }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--surface-2) 30%, var(--surface) 50%, var(--surface-2) 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+}
+
+.skeleton { background-color: var(--surface-2); }
+
+/* Soft diagonal light on banners — static, no motion. */
+.hero-sheen {
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgb(255 255 255 / 0.18), transparent 55%),
+    repeating-linear-gradient(135deg, rgb(255 255 255 / 0.06) 0 2px, transparent 2px 14px);
+}
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
+
+/* ── Accessibility prefs (set in /settings, applied as data-* on <html>) ── */
+
+/* Text size: everything is rem-based, so scaling the root scales the UI. */
+html[data-text="sm"] { font-size: 87.5%; }
+html[data-text="lg"] { font-size: 112.5%; }
+html[data-text="xl"] { font-size: 125%; }
+
+/* Dyslexia-friendly: rounded, open letterforms + wider spacing. System fonts only. */
+html[data-font="dyslexic"] body,
+html[data-font="dyslexic"] .font-serif {
+  font-family: "Comic Sans MS", "Comic Neue", Verdana, Tahoma, var(--font-ui), sans-serif !important;
+  letter-spacing: 0.04em;
+  word-spacing: 0.12em;
+  line-height: 1.7;
+}
+
+/* High contrast: stronger ink and borders, in both themes. */
+html[data-contrast="high"] {
+  --ink: #000000;
+  --ink-soft: #2b2b25;
+  --line: #5c5747;
+  --bg: #fffdf6;
+  --surface: #ffffff;
+  --forest: #0d2618;
+}
+html[data-contrast="high"][data-theme="dark"] {
+  --bg: #000000;
+  --surface: #0b0f0c;
+  --surface-2: #1a211c;
+  --ink: #ffffff;
+  --ink-soft: #d8d4c4;
+  --line: #8a9a8f;
+  --forest: #b6e3c1;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-contrast="high"]:not([data-theme="light"]) {
+    --bg: #000000;
+    --surface: #0b0f0c;
+    --surface-2: #1a211c;
+    --ink: #ffffff;
+    --ink-soft: #d8d4c4;
+    --line: #8a9a8f;
+    --forest: #b6e3c1;
+  }
+}
+
+/* Reduce motion: opt-in override on top of the OS setting. */
+html[data-motion="reduce"] *,
+html[data-motion="reduce"] *::before,
+html[data-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
