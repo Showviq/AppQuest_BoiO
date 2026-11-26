@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --bg: #f3eedd;
+  --surface: #fbf8ef;
+  --surface-2: #ebe4cf;
+  --ink: #262722;
+  --ink-soft: #66665a;
+  --line: #ddd4bb;
+  --forest: #1f3d2b;
+  --forest-soft: #dde6d8;
+  --on-forest: #f3eedd;
+  --gold: #b08d3c;
+  --danger: #a3392b;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131814;
+    --surface: #1b221d;
+    --surface-2: #242d27;
+    --ink: #ece5d1;
+    --ink-soft: #a3a08f;
+    --line: #2f3a33;
+    --forest: #8dbb98;
+    --forest-soft: #23362a;
+    --on-forest: #10160f;
+    --gold: #d2b061;
+    --danger: #e0806f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #131814;
+  --surface: #1b221d;
+  --surface-2: #242d27;
+  --ink: #ece5d1;
+  --ink-soft: #a3a08f;
+  --line: #2f3a33;
+  --forest: #8dbb98;
+  --forest-soft: #23362a;
+  --on-forest: #10160f;
+  --gold: #d2b061;
+  --danger: #e0806f;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-forest: var(--forest);
+  --color-forest-soft: var(--forest-soft);
+  --color-on-forest: var(--on-forest);
+  --color-gold: var(--gold);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-ui), system-ui, sans-serif;
+  --font-serif: var(--font-book), Georgia, serif;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-ui), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Accordion (native <details>) */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] > summary .chev {
+  transform: rotate(180deg);
+}
+
+/* Bottom sheet motion — only in response to user action */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.sheet-enter { animation: sheet-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.backdrop-enter { animation: fade-in 180ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet-enter,
+  .backdrop-enter { animation: none; }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
