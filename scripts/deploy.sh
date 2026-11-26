@@ -14,7 +14,10 @@ git ls-files -co --exclude-standard | grep -v '^~\$' > "$TMP/files.txt"
 tar -czf "$TMP/boio.tgz" -T "$TMP/files.txt"
 scp -i "$KEY" -q "$TMP/boio.tgz" "$HOST:/tmp/boio.tgz"
 ssh -i "$KEY" "$HOST" 'set -e
-  cd /opt/boio && tar -xzf /tmp/boio.tgz && rm /tmp/boio.tgz
+  cd /opt/boio
+  # Replace code folders so files deleted locally disappear here too (.env*, .data/ untouched).
+  rm -rf src public docs scripts
+  tar -xzf /tmp/boio.tgz && rm /tmp/boio.tgz
   npm ci --no-audit --no-fund >/dev/null
   NODE_OPTIONS=--max-old-space-size=1536 npm run build >/dev/null
   sudo systemctl restart boio && sleep 3 && systemctl is-active boio'
